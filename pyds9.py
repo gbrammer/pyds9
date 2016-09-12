@@ -778,6 +778,21 @@ class DS9(object):
             """
             raise ValueError('set_np2arr not defined (numpy not found)')
     
+    def view(self, img, header=None):
+        """
+        From pysao
+        """
+        if hasattr(img, 'header'):
+            ### FITS HDU
+            self.set_np2arr(img.data)
+            if not header:
+                header = img.header
+            self.set("wcs replace", get_wcs_headers(header))
+        else:
+            self.set_np2arr(img)
+            if header:
+                self.set("wcs replace", get_wcs_headers(header))
+    
     def frame(self, id):
         self.set('frame %d' %(id))
     
@@ -824,7 +839,7 @@ def get_wcs_headers(h):
     """
     import re
     
-    wcs_key_pattern = re.compile(r'^(NAXIS|CD|CDELT|CRPIX|CRVAL|CTYPE|CROTA|LONGPOLE|LATPOLE|PV|DISTORT|OBJECT|BUNIT|EPOCH|EQUINOX|LTV|LTM|DTV|DTM)')
+    wcs_key_pattern = re.compile(r'^(NAXIS|CD|CDELT|CRPIX|CRVAL|CTYPE|CROTA|LONGPOLE|LATPOLE|PV|DISTORT|OBJECT|BUNIT|EPOCH|EQUINOX|LTV|LTM|DTV|DTM|PC|CUNIT|RADESYS|WCSNAME|A_|B_)')
     
     try:
         cardlist = h.ascardlist()
